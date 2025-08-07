@@ -1,0 +1,435 @@
+import React, { useState, useRef, useEffect } from 'react';
+import { FileText, MapPin, Camera, Download, User, Shield, Building, Calendar } from 'lucide-react';
+
+const TechnicalReportSystem = () => {
+  const [formData, setFormData] = useState({
+    notaTecnica: '',
+    numeroProcesso: '',
+    municipio: '',
+    codigoImovel: '',
+    dadosCartorais: '',
+    dataVisita: '',
+    avaliacao: '',
+    endereco: '',
+    tipoUso: 'residencial',
+    situacao: 'ocupado',
+    descricaoImovel: '',
+    vistoriaRelatorio: '',
+    regularizacao: '',
+    conclusao: '',
+    relatorioFotografico: '',
+    responsavelVistoria: '',
+    responsavelQualidade: ''
+  });
+
+  const [mapAddress, setMapAddress] = useState('');
+  const [mapCoords, setMapCoords] = useState('');
+  const [mapCapture, setMapCapture] = useState(null);
+  
+  const mapRef = useRef(null);
+
+  // Simular integração com Google Maps
+  useEffect(() => {
+    if (mapRef.current && (mapAddress || mapCoords)) {
+      // Aqui você integraria com a API do Google Maps
+      // Por ora, vamos simular um mapa
+      const mapElement = mapRef.current;
+      mapElement.innerHTML = `
+        <div style="
+          width: 100%; 
+          height: 400px; 
+          background: linear-gradient(45deg, #e8f5e8 25%, transparent 25%), 
+                      linear-gradient(-45deg, #e8f5e8 25%, transparent 25%), 
+                      linear-gradient(45deg, transparent 75%, #e8f5e8 75%), 
+                      linear-gradient(-45deg, transparent 75%, #e8f5e8 75%);
+          background-size: 20px 20px;
+          background-position: 0 0, 0 10px, 10px -10px, -10px 0px;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          border: 2px solid #10b981;
+          border-radius: 8px;
+          position: relative;
+        ">
+          <div style="
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+            text-align: center;
+          ">
+            <div style="color: #10b981; font-weight: bold; margin-bottom: 8px;">
+              📍 Localização do Imóvel
+            </div>
+            <div style="color: #666; font-size: 14px;">
+              ${mapAddress || 'Coordenadas: ' + mapCoords}
+            </div>
+          </div>
+        </div>
+      `;
+    }
+  }, [mapAddress, mapCoords]);
+
+  const handleInputChange = (e) => {
+    const { name, value } = e.target;
+    setFormData(prev => ({ ...prev, [name]: value }));
+  };
+
+  const captureMap = () => {
+    if (mapRef.current) {
+      // Simular captura do mapa
+      setMapCapture({
+        timestamp: new Date().toISOString(),
+        address: mapAddress || mapCoords || 'Localização capturada'
+      });
+    }
+  };
+
+  const generatePDF = () => {
+    // Simular geração de PDF
+    const reportData = {
+      ...formData,
+      mapCapture: mapCapture ? 'Incluído' : 'Não capturado',
+      dataGeracao: new Date().toLocaleString('pt-BR')
+    };
+    
+    console.log('Relatório PDF gerado:', reportData);
+    alert('PDF gerado com sucesso! (Simulação - em produção seria baixado)');
+  };
+
+  return (
+    <div className="min-h-screen bg-gray-50 py-8 px-4">
+      <div className="max-w-4xl mx-auto bg-white rounded-lg shadow-lg overflow-hidden">
+        {/* Header */}
+        <div className="bg-blue-600 text-white p-6">
+          <div className="flex items-center space-x-3">
+            <FileText size={32} />
+            <div>
+              <h1 className="text-2xl font-bold">Sistema de Nota Técnica</h1>
+              <p className="text-blue-100">Relatório de Vistoria de Imóvel</p>
+            </div>
+          </div>
+        </div>
+
+        <div className="p-6 space-y-8">
+          {/* Informações do Colaborador */}
+          <section>
+            <h2 className="text-xl font-semibold text-gray-800 mb-4 flex items-center space-x-2">
+              <User className="text-blue-600" size={20} />
+              <span>Informações do Colaborador</span>
+            </h2>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">
+                  Nota Técnica do Colaborador
+                </label>
+                <input
+                  type="text"
+                  name="notaTecnica"
+                  value={formData.notaTecnica}
+                  onChange={handleInputChange}
+                  className="w-full p-3 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                  placeholder="Digite a nota técnica"
+                />
+              </div>
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">
+                  Número do Processo
+                </label>
+                <input
+                  type="text"
+                  name="numeroProcesso"
+                  value={formData.numeroProcesso}
+                  onChange={handleInputChange}
+                  className="w-full p-3 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                  placeholder="Digite o número do processo"
+                />
+              </div>
+            </div>
+          </section>
+
+          {/* Informações do Imóvel */}
+          <section>
+            <h2 className="text-xl font-semibold text-gray-800 mb-4 flex items-center space-x-2">
+              <Building className="text-blue-600" size={20} />
+              <span>Informações do Imóvel</span>
+            </h2>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">Município</label>
+                <input
+                  type="text"
+                  name="municipio"
+                  value={formData.municipio}
+                  onChange={handleInputChange}
+                  className="w-full p-3 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                  placeholder="Município"
+                />
+              </div>
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">Código do Imóvel</label>
+                <input
+                  type="text"
+                  name="codigoImovel"
+                  value={formData.codigoImovel}
+                  onChange={handleInputChange}
+                  className="w-full p-3 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                  placeholder="Código do imóvel"
+                />
+              </div>
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">Dados Cartorais</label>
+                <input
+                  type="text"
+                  name="dadosCartorais"
+                  value={formData.dadosCartorais}
+                  onChange={handleInputChange}
+                  className="w-full p-3 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                  placeholder="Dados cartorais"
+                />
+              </div>
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">Data da Visita</label>
+                <input
+                  type="date"
+                  name="dataVisita"
+                  value={formData.dataVisita}
+                  onChange={handleInputChange}
+                  className="w-full p-3 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                />
+              </div>
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">Avaliação</label>
+                <input
+                  type="text"
+                  name="avaliacao"
+                  value={formData.avaliacao}
+                  onChange={handleInputChange}
+                  className="w-full p-3 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                  placeholder="Valor da avaliação"
+                />
+              </div>
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">Endereço</label>
+                <input
+                  type="text"
+                  name="endereco"
+                  value={formData.endereco}
+                  onChange={handleInputChange}
+                  className="w-full p-3 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                  placeholder="Endereço completo"
+                />
+              </div>
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">Tipo de Uso</label>
+                <select
+                  name="tipoUso"
+                  value={formData.tipoUso}
+                  onChange={handleInputChange}
+                  className="w-full p-3 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                >
+                  <option value="residencial">Residencial</option>
+                  <option value="comercial">Comercial</option>
+                  <option value="industrial">Industrial</option>
+                  <option value="misto">Misto</option>
+                </select>
+              </div>
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">Situação</label>
+                <select
+                  name="situacao"
+                  value={formData.situacao}
+                  onChange={handleInputChange}
+                  className="w-full p-3 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                >
+                  <option value="ocupado">Ocupado</option>
+                  <option value="desocupado">Desocupado</option>
+                  <option value="abandonado">Abandonado</option>
+                  <option value="em_reforma">Em Reforma</option>
+                </select>
+              </div>
+            </div>
+          </section>
+
+          {/* Mapa */}
+          <section>
+            <h2 className="text-xl font-semibold text-gray-800 mb-4 flex items-center space-x-2">
+              <MapPin className="text-blue-600" size={20} />
+              <span>Localização do Imóvel</span>
+            </h2>
+            
+            <div className="space-y-4">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">Endereço para Busca</label>
+                  <input
+                    type="text"
+                    value={mapAddress}
+                    onChange={(e) => setMapAddress(e.target.value)}
+                    className="w-full p-3 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                    placeholder="Digite o endereço"
+                  />
+                </div>
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">Coordenadas (Lat, Long)</label>
+                  <input
+                    type="text"
+                    value={mapCoords}
+                    onChange={(e) => setMapCoords(e.target.value)}
+                    className="w-full p-3 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                    placeholder="Ex: -23.550520, -46.633308"
+                  />
+                </div>
+              </div>
+
+              <div className="relative">
+                <div ref={mapRef} className="w-full h-96 bg-gray-200 rounded-lg"></div>
+                
+                <div className="absolute top-4 right-4 flex space-x-2">
+                  <button
+                    onClick={captureMap}
+                    className="bg-green-600 text-white p-2 rounded-md hover:bg-green-700 flex items-center space-x-1"
+                  >
+                    <Camera size={16} />
+                    <span className="text-sm">Capturar</span>
+                  </button>
+                </div>
+              </div>
+
+              {mapCapture && (
+                <div className="p-4 bg-green-50 border border-green-200 rounded-md">
+                  <div className="flex items-center space-x-2 text-green-800">
+                    <Camera size={16} />
+                    <span className="font-medium">Mapa capturado com sucesso!</span>
+                  </div>
+                  <p className="text-green-700 text-sm mt-1">
+                    {mapCapture.address} - {new Date(mapCapture.timestamp).toLocaleString('pt-BR')}
+                  </p>
+                </div>
+              )}
+            </div>
+          </section>
+
+          {/* Descrição do Imóvel */}
+          <section>
+            <h2 className="text-xl font-semibold text-gray-800 mb-4">Descrição do Imóvel</h2>
+            <textarea
+              name="descricaoImovel"
+              value={formData.descricaoImovel}
+              onChange={handleInputChange}
+              rows={4}
+              className="w-full p-3 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+              placeholder="Descreva as características do imóvel..."
+            />
+          </section>
+
+          {/* Vistoria e Relatório */}
+          <section>
+            <h2 className="text-xl font-semibold text-gray-800 mb-4">Vistoria e Relatório</h2>
+            <textarea
+              name="vistoriaRelatorio"
+              value={formData.vistoriaRelatorio}
+              onChange={handleInputChange}
+              rows={4}
+              className="w-full p-3 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+              placeholder="Detalhes da vistoria e observações..."
+            />
+          </section>
+
+          {/* Regularização */}
+          <section>
+            <h2 className="text-xl font-semibold text-gray-800 mb-4">Regularização</h2>
+            <textarea
+              name="regularizacao"
+              value={formData.regularizacao}
+              onChange={handleInputChange}
+              rows={4}
+              className="w-full p-3 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+              placeholder="Informações sobre regularização..."
+            />
+          </section>
+
+          {/* Conclusão */}
+          <section>
+            <h2 className="text-xl font-semibold text-gray-800 mb-4">Conclusão</h2>
+            <textarea
+              name="conclusao"
+              value={formData.conclusao}
+              onChange={handleInputChange}
+              rows={4}
+              className="w-full p-3 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+              placeholder="Conclusão do relatório..."
+            />
+          </section>
+
+          {/* Relatório Fotográfico */}
+          <section>
+            <h2 className="text-xl font-semibold text-gray-800 mb-4 flex items-center space-x-2">
+              <Camera className="text-blue-600" size={20} />
+              <span>Relatório Fotográfico</span>
+            </h2>
+            <textarea
+              name="relatorioFotografico"
+              value={formData.relatorioFotografico || ''}
+              onChange={handleInputChange}
+              rows={6}
+              className="w-full p-3 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+              placeholder="Descreva as condições visuais do imóvel, estado de conservação, características arquitetônicas, acabamentos, instalações, etc..."
+            />
+          </section>
+
+          {/* Responsáveis */}
+          <section>
+            <h2 className="text-xl font-semibold text-gray-800 mb-4 flex items-center space-x-2">
+              <Shield className="text-blue-600" size={20} />
+              <span>Responsáveis</span>
+            </h2>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">
+                  Responsável pela Vistoria
+                </label>
+                <input
+                  type="text"
+                  name="responsavelVistoria"
+                  value={formData.responsavelVistoria}
+                  onChange={handleInputChange}
+                  className="w-full p-3 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                  placeholder="Nome do responsável pela vistoria"
+                />
+              </div>
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">
+                  Responsável pelo Controle de Qualidade
+                </label>
+                <input
+                  type="text"
+                  name="responsavelQualidade"
+                  value={formData.responsavelQualidade}
+                  onChange={handleInputChange}
+                  className="w-full p-3 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                  placeholder="Nome do responsável pela qualidade"
+                />
+              </div>
+            </div>
+          </section>
+
+          {/* Botão Gerar PDF */}
+          <section className="border-t pt-6">
+            <div className="flex justify-center">
+              <button
+                onClick={generatePDF}
+                className="bg-green-600 text-white px-8 py-3 rounded-md hover:bg-green-700 flex items-center space-x-3 text-lg font-medium"
+              >
+                <Download size={20} />
+                <span>Gerar PDF do Relatório</span>
+              </button>
+            </div>
+          </section>
+        </div>
+      </div>
+    </div>
+  );
+};
+
+export default TechnicalReportSystem;
